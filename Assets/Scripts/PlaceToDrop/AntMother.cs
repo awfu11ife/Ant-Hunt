@@ -1,17 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AntMother : MonoBehaviour
+public class AntMother : PlaceToDropItem
 {
-    [SerializeField] private CollectableObjectTypes _requiredType;
-    [SerializeField] private EggSpawner _eggSpawner;
+    [SerializeField] private Spawner _eggSpawner;
     [SerializeField] private GameObject _eggPrefab;
-    [SerializeField] private List<Construction> _constructions = new List<Construction>();
 
+    private Construction[] _constructions;
     private bool _isAbleToSpawnEggs = false;
 
-    public CollectableObjectTypes requiredType => _requiredType;
     public bool IsAbleToSpawnEggs => _isAbleToSpawnEggs;
+
+    private void Awake()
+    {
+        _constructions = FindObjectsOfType<Construction>();
+    }
 
     private void OnEnable()
     {
@@ -29,12 +32,23 @@ public class AntMother : MonoBehaviour
         }
     }
 
-    public void SpawnEgg()
+    public override void TakeItem()
+    {
+        SpawnEgg();
+    }
+
+    public override bool CheckConditionOfPossibilityToTakeItem()
+    {
+        return _isAbleToSpawnEggs;
+    }
+
+    private void SetAbleToSpawnEggs(bool isAntNestActivated)
+    {
+        _isAbleToSpawnEggs = isAntNestActivated;
+    }
+
+    private void SpawnEgg()
     {
         _eggSpawner.Spawn(_eggPrefab);
-    }
-    private void SetAbleToSpawnEggs()
-    {
-        _isAbleToSpawnEggs = true;
     }
 }

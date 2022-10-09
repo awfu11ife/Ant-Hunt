@@ -1,5 +1,57 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1793208521260573078
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 372581032497970414}
+  - component: {fileID: 1366826248218283746}
+  - component: {fileID: 8803172403144377487}
+  m_Layer: 0
+  m_Name: Spanner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &372581032497970414
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1793208521260573078}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -1.3906263, z: -2.5205789}
+  m_LocalScale: {x: 2, y: 0.625, z: 2}
+  m_Children: []
+  m_Father: {fileID: 6132884458065717856}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &1366826248218283746
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1793208521260573078}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &8803172403144377487
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1793208521260573078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 049de2330fe66e04c89d9a810c28aa64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6132884458065717869
 GameObject:
   m_ObjectHideFlags: 0
@@ -12,7 +64,7 @@ GameObject:
   - component: {fileID: 6132884458065717857}
   - component: {fileID: 6132884458065717870}
   - component: {fileID: 6132884458065717871}
-  - component: {fileID: 6132884458065717868}
+  - component: {fileID: 3498675710281376700}
   m_Layer: 0
   m_Name: Ant Spawner
   m_TagString: Untagged
@@ -28,9 +80,10 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6132884458065717869}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.14, y: -0.335, z: 0.354}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 0.16, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 372581032497970414}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -97,7 +150,7 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
---- !u!114 &6132884458065717868
+--- !u!114 &3498675710281376700
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -106,9 +159,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 6132884458065717869}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b2deb9152c457e499ebb65d4b607858, type: 3}
+  m_Script: {fileID: 11500000, guid: 305ef6dbbae005248a4c5fb30d86dc5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _requiredType: 1
-  _requiredNumberOfItems: 0
-  _placeToDropEggsPrefab: {fileID: 0}
+  _collectableObjectTypes: 1
+  _eggSpawner: {fileID: 8803172403144377487}
+  _eggPrefab: {fileID: 4555888839345340525, guid: 4705af7f597b7bd44a7c4d6e5edb66ce, type: 3}

@@ -28,9 +28,19 @@ public class Collector : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        DropToConstruction(other);
+        TryDropItem(other);
+    }
 
-        DropToMotherAnt(other);
+    private void TryDropItem(Collider other)
+    {
+        if (other.gameObject.TryGetComponent(out PlaceToDropItem placeToDrop) && _inventory.IsAbleToDrop)
+        {
+            if (placeToDrop.RequiredType == _inventory.LastTakenItem.GetComponent<InventoryViewObject>().CollectableObjectTypes && placeToDrop.CheckConditionOfPossibilityToTakeItem())
+            {
+                _onDrop.Invoke();
+                placeToDrop.TakeItem();
+            }
+        }
     }
 
     private void TakeObject(Collider other)
@@ -41,30 +51,6 @@ public class Collector : MonoBehaviour
             {
                 collectableItem.DisablePart();
                 _onPickUp?.Invoke(collectableItem.InstantiateInventoryView(_inventory.transform));
-            }
-        }
-    }
-
-    private void DropToConstruction(Collider other)
-    {
-        if (other.gameObject.TryGetComponent(out Construction placeToDrop) && _inventory.IsAbleToDrop)
-        {
-            if (placeToDrop.requiredType == _inventory.LastTakenItem.GetComponent<InventoryViewObject>().CollectableObjectTypes)
-            {
-                _onDrop?.Invoke();
-                placeToDrop.AddItem();
-            }
-        }
-    }
-
-    private void DropToMotherAnt(Collider other)
-    {
-        if (other.gameObject.TryGetComponent(out AntMother antMother) && _inventory.IsAbleToDrop)
-        {
-            if (antMother.requiredType == _inventory.LastTakenItem.GetComponent<InventoryViewObject>().CollectableObjectTypes && antMother.IsAbleToSpawnEggs == true)
-            {
-                _onDrop?.Invoke();
-                antMother.SpawnEgg();
             }
         }
     }

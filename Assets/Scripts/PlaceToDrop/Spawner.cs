@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EggSpawner : MonoBehaviour
+public class Spawner : MonoBehaviour
 {
     public void Spawn(GameObject eggPrefab)
     {
