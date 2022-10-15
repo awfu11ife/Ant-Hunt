@@ -1,23 +1,28 @@
-using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CollectableObject : MonoBehaviour
 {
-    [SerializeField] private float _disableTime;
     [SerializeField] private GameObject _inventoryViewObject;
 
-    private WaitForSeconds _delay;
+    private bool _isAbleToTake = true;
+    private UnityEvent _onItemCollected = new UnityEvent();
+
+    public bool IsAbleToTake => _isAbleToTake;
 
     public GameObject InventoryViewObject => _inventoryViewObject;
 
-    private void Start()
+    public event UnityAction OnItemCollected
     {
-        _delay = new WaitForSeconds(_disableTime);
+        add => _onItemCollected.AddListener(value);
+        remove => _onItemCollected.RemoveListener(value);
     }
 
     public void DisablePart()
     {
-        StartCoroutine(DisableDelay());
+        _isAbleToTake = false;
+        gameObject.SetActive(false);
+        _onItemCollected?.Invoke();
     }
 
     public InventoryViewObject InstantiateInventoryView(Transform parent)
@@ -27,11 +32,4 @@ public class CollectableObject : MonoBehaviour
         InventoryViewObject inventoryViewObjectComponent = inventoryViewObject.GetComponent<InventoryViewObject>();
         return inventoryViewObjectComponent;
     }
-
-    private IEnumerator DisableDelay()
-    {
-        yield return _delay;
-        Destroy(gameObject);
-    }
-
 }

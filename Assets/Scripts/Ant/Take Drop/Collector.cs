@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -7,7 +8,7 @@ public class Collector : MonoBehaviour
     [SerializeField] private Inventory _inventory;
 
     private UnityEvent<InventoryViewObject> _onPickUp = new UnityEvent<InventoryViewObject>();
-    private UnityEvent _onDrop = new UnityEvent();
+    private UnityEvent<PlaceToDropItem> _onDrop = new UnityEvent<PlaceToDropItem>();
 
     public event UnityAction<InventoryViewObject> OnPickUp
     {
@@ -15,7 +16,7 @@ public class Collector : MonoBehaviour
         remove => _onPickUp.RemoveListener(value);
     }
 
-    public event UnityAction OnDrop
+    public event UnityAction<PlaceToDropItem> OnDrop
     {
         add => _onDrop.AddListener(value);
         remove => _onDrop.RemoveListener(value);
@@ -23,7 +24,7 @@ public class Collector : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        TakeObject(other);
+        TryTakeObject(other);
     }
 
     private void OnTriggerStay(Collider other)
@@ -37,15 +38,15 @@ public class Collector : MonoBehaviour
         {
             if (placeToDrop.RequiredType == _inventory.LastTakenItem.GetComponent<InventoryViewObject>().CollectableObjectTypes && placeToDrop.CheckConditionOfPossibilityToTakeItem())
             {
-                _onDrop.Invoke();
+                _onDrop.Invoke(placeToDrop);
                 placeToDrop.TakeItem();
             }
         }
     }
 
-    private void TakeObject(Collider other)
+    private void TryTakeObject(Collider other)
     {
-        if (other.gameObject.TryGetComponent(out CollectableObject collectableItem))
+        if (other.gameObject.TryGetComponent(out CollectableObject collectableItem) && collectableItem.IsAbleToTake == true)
         {
             if (_inventory.IsAbleToTake)
             {

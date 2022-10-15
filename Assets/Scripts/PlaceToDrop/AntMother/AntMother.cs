@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AntMother : PlaceToDropItem
@@ -18,9 +17,9 @@ public class AntMother : PlaceToDropItem
 
     private void OnEnable()
     {
-        foreach (var item in _constructions)
+        foreach (var construction in _constructions)
         {
-            item.OnCollectedEnough += SetAbleToSpawnEggs;
+            construction.OnCollectedEnough += SetAbleToSpawnEggs;
         }
     }
 
