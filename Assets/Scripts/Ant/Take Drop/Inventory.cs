@@ -13,8 +13,7 @@ public class Inventory : MonoBehaviour
     private bool _isAbleToDrop = false;
 
     public bool IsAbleToTake => _maxItemsInInventory > _inventoryItems.Count;
-    public bool IsAbleToDrop => _isAbleToDrop;
-    public InventoryViewObject LastTakenItem => _inventoryItems[_inventoryItems.Count - 1];
+    public bool IsAbleToDrop => _isAbleToDrop && _inventoryItems.Count > 0;
 
     private void OnEnable()
     {
@@ -26,6 +25,14 @@ public class Inventory : MonoBehaviour
     {
         _collector.OnPickUp -= AddToInventory;
         _collector.OnDrop -= RemoveFromInventory;
+    }
+
+    public InventoryViewObject ReturnLastItemInInventory()
+    {
+        if (_inventoryItems.Count > 0)
+            return _inventoryItems[_inventoryItems.Count - 1];
+        else
+            return null;
     }
 
     private void AddToInventory(InventoryViewObject justTakenGameobject)
@@ -40,9 +47,12 @@ public class Inventory : MonoBehaviour
     {
         if (_isAbleToDrop)
         {
-            _inventoryItems[_inventoryItems.Count - 1].transform.SetParent(placeToDrop.transform);
-            _inventoryItems[_inventoryItems.Count - 1].DestroyOnDrop(placeToDrop.transform, _inventoryItems.Count);
-            _inventoryItems.RemoveAt(_inventoryItems.Count - 1);
+            InventoryViewObject lastObjectInInventory = _inventoryItems[_inventoryItems.Count - 1];
+
+            lastObjectInInventory.transform.SetParent(placeToDrop.transform);
+            lastObjectInInventory.DisableOnDrop(placeToDrop.transform, _inventoryItems.Count);
+            _inventoryItems.Remove(lastObjectInInventory);
+
             _isAbleToDrop = false;
 
             if (_inventoryItems.Count > 0)

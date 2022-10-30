@@ -6,9 +6,11 @@ using UnityEngine.Events;
 public class BotMover : MonoBehaviour
 {
     [SerializeField] private BotInventory _inventory;
+    [SerializeField] private float _stopSquareMagnitude = 0.1f;
 
     private GameObject _currentTarget;
     private NavMeshAgent _navMeshAgent;
+    private BotStats _botStats;
     private BotTargetSwitcher _antTargetSwitcher;
     private UnityEvent<GameObject> _onTargerReached = new UnityEvent<GameObject>();
 
@@ -26,31 +28,44 @@ public class BotMover : MonoBehaviour
     private void OnDisable()
     {
         _antTargetSwitcher.OnTargetDisable -= ChangeTargetIfDisable;
+        _botStats.OnSpeedChanged -= UpdateSpeed;
     }
 
     private void Start()
     {
+        _botStats = GetComponentInParent<BotStats>();
         _antTargetSwitcher = GetComponentInParent<BotTargetSwitcher>();
+
         FindTarget();
 
+        _botStats.OnSpeedChanged += UpdateSpeed;
         _antTargetSwitcher.OnTargetDisable += ChangeTargetIfDisable;
+
+        UpdateSpeed();
     }
 
     private void Update()
     {
-        if (_currentTarget != null)
+        if (_currentTarget != null && _currentTarget.activeSelf == true)
             _navMeshAgent.destination = _currentTarget.transform.position;
+        else
+            FindTarget();
 
-        CheckDistanceFromTarget();
+        CheckTargerReached();
     }
 
-    private void CheckDistanceFromTarget()
+    private void UpdateSpeed()
+    {
+        _navMeshAgent.speed = _botStats.CurrentSpeed;
+    }
+
+    private void CheckTargerReached()
     {
         if (!_navMeshAgent.pathPending)
         {
             if (_navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance)
             {
-                if (!_navMeshAgent.hasPath || _navMeshAgent.velocity.sqrMagnitude <= 0.1f)
+                if (!_navMeshAgent.hasPath || _navMeshAgent.velocity.sqrMagnitude <= _stopSquareMagnitude)
                 {
                     SendMessageIfTargetReached();
                     _currentTarget = null;
@@ -68,15 +83,15 @@ public class BotMover : MonoBehaviour
 
     private void FindTarget()
     {
-        _currentTarget = _antTargetSwitcher.FindAvaliablTarget(_inventory.IsInventoryFull);
+        _currentTarget = _antTargetSwitcher.FindAvaliablTarget(_inventory.IsInventoryFull, transform.position);
     }
 
-    private void ChangeTargetIfDisable(FoodPiecesContainer foodPiecesContainer)
+    private void ChangeTargetIfDisable(CollectableObject piece)
     {
-        if (_currentTarget == foodPiecesContainer.gameObject)
+        if (_currentTarget == piece.gameObject)
         {
             _navMeshAgent.isStopped = true;
-            _currentTarget = _antTargetSwitcher.FindAvaliablTarget(_inventory.IsInventoryFull);
+            _currentTarget = _antTargetSwitcher.FindAvaliablTarget(_inventory.IsInventoryFull, transform.position);
             _navMeshAgent.isStopped = false;
         }
     }

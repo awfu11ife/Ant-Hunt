@@ -34,12 +34,12 @@ public class Collector : MonoBehaviour
 
     private void TryDropItem(Collider other)
     {
-        if (other.gameObject.TryGetComponent(out PlaceToDropItem placeToDrop) && _inventory.IsAbleToDrop)
+        if (other.gameObject.TryGetComponent(out PlaceToDropItem placeToDrop) && _inventory.IsAbleToDrop == true)
         {
-            if (placeToDrop.RequiredType == _inventory.LastTakenItem.GetComponent<InventoryViewObject>().CollectableObjectTypes && placeToDrop.CheckConditionOfPossibilityToTakeItem())
+            if(placeToDrop.TryMatchRequiredType(_inventory.ReturnLastItemInInventory().GetComponent<InventoryViewObject>().CollectableObjectTypes) && placeToDrop.CheckConditionOfPossibilityToTakeItem() == true)
             {
+                placeToDrop.TakeItem(_inventory.ReturnLastItemInInventory().GetComponent<InventoryViewObject>());
                 _onDrop.Invoke(placeToDrop);
-                placeToDrop.TakeItem();
             }
         }
     }

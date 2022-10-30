@@ -5,18 +5,19 @@ using UnityEngine.Events;
 
 public class FoodPiecesContainer : MonoBehaviour
 {
-    private int _piecesCount;
+    [SerializeField] private ParticleSystem _eatParticle;
+
     private bool _isAbleToEat = true;
     private List<CollectableObject> _pieces = new List<CollectableObject>();
 
-    private UnityEvent<FoodPiecesContainer> _onPossibilityToEatChanged = new UnityEvent<FoodPiecesContainer>();
+    private UnityEvent<CollectableObject> _onPieceRemoved = new UnityEvent<CollectableObject>();
 
     public bool IsAbleToEat => _isAbleToEat;
 
-    public event UnityAction<FoodPiecesContainer> OnPossibilityToEatChanged
+    public event UnityAction<CollectableObject> OnPieceRemoved
     {
-        add => _onPossibilityToEatChanged.AddListener(value);
-        remove => _onPossibilityToEatChanged.RemoveListener(value);
+        add => _onPieceRemoved.AddListener(value);
+        remove => _onPieceRemoved.RemoveListener(value);
     }
 
     private void Awake()
@@ -29,6 +30,7 @@ public class FoodPiecesContainer : MonoBehaviour
         foreach (CollectableObject piece in _pieces)
         {
             piece.OnItemCollected += ChangeNumberOfPieces;
+            piece.OnItemCollected += CreateEatParticle;
         }
     }
 
@@ -37,6 +39,7 @@ public class FoodPiecesContainer : MonoBehaviour
         foreach (CollectableObject piece in _pieces)
         {
             piece.OnItemCollected -= ChangeNumberOfPieces;
+            piece.OnItemCollected -= CreateEatParticle;
         }
     }
 
@@ -49,17 +52,12 @@ public class FoodPiecesContainer : MonoBehaviour
         {
             float currentDistance = (piece.transform.position - collectorPosition).sqrMagnitude;
 
-            if (currentDistance < distance && piece.IsAbleToTake == true)
+            if (currentDistance < distance && piece.IsAbleToTake == true && piece.isActiveAndEnabled == true)
             {
                 nearestPiece = piece;
                 distance = currentDistance;
-
             }
         }
-
-        if (nearestPiece != null)
-            nearestPiece.DisablePart();
-
         return nearestPiece;
     }
 
@@ -71,18 +69,22 @@ public class FoodPiecesContainer : MonoBehaviour
         {
             _pieces.Add(piece);
         }
-
-        _piecesCount = _pieces.Count;
     }
 
-    private void ChangeNumberOfPieces()
+    private void ChangeNumberOfPieces(CollectableObject piece)
     {
-        _piecesCount--;
+        _pieces.Remove(piece);
 
-        if (_piecesCount <= 0)
+        if (_pieces.Count == 0)
         {
             _isAbleToEat = false;
-            _onPossibilityToEatChanged?.Invoke(this);
+            _onPieceRemoved?.Invoke(piece);
         }
+    }
+
+    private void CreateEatParticle(CollectableObject piece)
+    {
+        var particleMain = Instantiate(_eatParticle, piece.transform.position, Quaternion.identity).main;
+        particleMain.startColor = piece.Color;
     }
 }
