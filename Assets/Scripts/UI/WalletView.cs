@@ -33,9 +33,13 @@ public class WalletView : MonoBehaviour
 
             outputValue = currentMoneyAmount.ToString("#.##") + _names[i];
         }
-        else
+        else if(currentMoneyAmount == 0)
         {
             outputValue = currentMoneyAmount.ToString();
+        }
+        else
+        {
+            outputValue = "MAX";
         }
 
         _moneyAmountText.text = $"{outputValue}$";

@@ -6,6 +6,8 @@ public class Inventory : MonoBehaviour
 {
     [SerializeField] private Collector _collector;
     [SerializeField] private int _maxItemsInInventory;
+    [SerializeField] private AudioSource _takeSound;
+    [SerializeField] private AudioSource _dropSound;
 
     private Vector3 _itemPlacePosition;
     private Quaternion _itemRotation;
@@ -41,6 +43,12 @@ public class Inventory : MonoBehaviour
         justTakenGameobject.SetInventoryPosition(_itemPlacePosition, _itemRotation, _inventoryItems.Count);
         _inventoryItems.Add(justTakenGameobject);
         _isAbleToDrop = true;
+
+        if (_takeSound.isPlaying == false)
+        {
+            _takeSound.pitch = Random.Range(0.9f, 1.1f);
+            _takeSound.Play();
+        }
     }
 
     private void RemoveFromInventory(PlaceToDropItem placeToDrop)
@@ -54,6 +62,12 @@ public class Inventory : MonoBehaviour
             _inventoryItems.Remove(lastObjectInInventory);
 
             _isAbleToDrop = false;
+
+            if (_dropSound.isPlaying == false)
+            {
+                _dropSound.pitch = Random.Range(0.9f, 1.1f);
+                _dropSound.Play();
+            }
 
             if (_inventoryItems.Count > 0)
                 StartCoroutine(RemoveDelay());

@@ -8,7 +8,8 @@ public class Wallet : MonoBehaviour
     [SerializeField] private ItemBuyer _itemBuyer;
     [SerializeField] private WalletView _walletView;
     [SerializeField] private Finish _finish;
-
+    [SerializeField] private SDK _yandexSDK;
+    [SerializeField] private int _moneyIncreaseValue = 2;
 
     private UnityEvent _onMoneyAmountChanged = new UnityEvent();
 
@@ -18,23 +19,25 @@ public class Wallet : MonoBehaviour
         remove => _onMoneyAmountChanged.RemoveListener(value);
     }
 
-    public int CurrentMoneyAmount { get; private set; }
+    public long CurrentMoneyAmount { get; private set; }
 
     private void Awake()
     {
         Load();
-    }
+    }  
 
     private void OnEnable()
     {
         _itemBuyer.OnBuy += AddMoney;
         _finish.OnReached += Save;
+        _yandexSDK.OnRewardViewed += IncreaseMoneyAfterWatchinAds;
     }
 
     private void OnDisable()
     {
         _itemBuyer.OnBuy -= AddMoney;
         _finish.OnReached -= Save;
+        _yandexSDK.OnRewardViewed -= IncreaseMoneyAfterWatchinAds;
     }
 
     private void Start()
@@ -66,6 +69,13 @@ public class Wallet : MonoBehaviour
             _walletView.UpdateMoneyText(CurrentMoneyAmount);
             _onMoneyAmountChanged?.Invoke();
         }
+    }
+
+    private void IncreaseMoneyAfterWatchinAds()
+    {
+        CurrentMoneyAmount *= _moneyIncreaseValue;
+        _walletView.UpdateMoneyText(CurrentMoneyAmount);
+        _onMoneyAmountChanged?.Invoke();
     }
 
     private void Save()

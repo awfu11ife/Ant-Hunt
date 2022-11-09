@@ -19,16 +19,14 @@ public class CollectableObject : MonoBehaviour
 
     public GameObject InventoryViewObject => _inventoryViewObject;
 
-    private void Awake()
-    {
-        GetColor();
-    }
-
     public void DisablePart()
     {
-        _isAbleToTake = false;
-        gameObject.SetActive(false);
-        _onItemCollected?.Invoke(this);
+        if (isActiveAndEnabled == true)
+        {
+            _isAbleToTake = false;
+            gameObject.SetActive(false);
+            _onItemCollected?.Invoke(this);
+        }
     }
 
     public InventoryViewObject InstantiateInventoryView(Transform parent)
@@ -38,14 +36,19 @@ public class CollectableObject : MonoBehaviour
         InventoryViewObject inventoryViewObjectComponent = inventoryViewObject.GetComponent<InventoryViewObject>();
 
         if (inventoryViewObject.TryGetComponent(out Renderer renderer))
+        {
+            FindColor();
             renderer.material.color = Color;
+        }
 
         return inventoryViewObjectComponent;
     }
 
-    private void GetColor()
+    private void FindColor()
     {
-        if (TryGetComponent(out Renderer renderer))
+        var renderer = GetComponentInChildren<Renderer>();
+
+        if (renderer != null)
         {
             var materials = renderer.materials;
             Color = materials[materials.Length - 1].color;

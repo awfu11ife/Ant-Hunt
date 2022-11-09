@@ -9,6 +9,7 @@ public class Upgrade : MonoBehaviour
     [SerializeField] private int _startPrice;
     [SerializeField] private float _raisePercentPriceStep = .1f;
     [SerializeField] private int _statIncreaseValue;
+    [SerializeField] private AudioSource _sellSound;
 
     private int _currentLevel = 1;
 
@@ -49,6 +50,7 @@ public class Upgrade : MonoBehaviour
             _currentLevel++;
             UpdatePrice();
             _onInformationChanged?.Invoke(CurrentPrice, _currentLevel);
+            _sellSound.Play();
             _onUpgradeChanged?.Invoke(_type, _statIncreaseValue);
         }
     }

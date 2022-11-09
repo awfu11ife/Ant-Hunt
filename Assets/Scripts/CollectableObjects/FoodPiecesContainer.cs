@@ -1,11 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class FoodPiecesContainer : MonoBehaviour
 {
-    [SerializeField] private ParticleSystem _eatParticle;
+    [SerializeField] private CollectableObject _foodPieceParentPrefab;
+    [SerializeField] private ParticlePool _particlePool;
 
     private bool _isAbleToEat = true;
     private List<CollectableObject> _pieces = new List<CollectableObject>();
@@ -65,9 +65,12 @@ public class FoodPiecesContainer : MonoBehaviour
     {
         _pieces.Clear();
 
-        foreach (CollectableObject piece in transform.GetComponentsInChildren<CollectableObject>())
+        foreach (MeshRenderer pieceView in transform.GetComponentsInChildren<MeshRenderer>())
         {
-            _pieces.Add(piece);
+            var foodPieceParent = Instantiate(_foodPieceParentPrefab, transform);
+            foodPieceParent.transform.position = pieceView.transform.position;
+            pieceView.transform.SetParent(foodPieceParent.transform);
+            _pieces.Add(foodPieceParent);
         }
     }
 
@@ -84,7 +87,9 @@ public class FoodPiecesContainer : MonoBehaviour
 
     private void CreateEatParticle(CollectableObject piece)
     {
-        var particleMain = Instantiate(_eatParticle, piece.transform.position, Quaternion.identity).main;
-        particleMain.startColor = piece.Color;
+        var pieceMaterials = piece.GetComponentInChildren<Renderer>().materials;
+        var color = pieceMaterials[pieceMaterials.Length - 1].color;
+
+        _particlePool.InvokeParticle(piece.transform.position, color);
     }
 }

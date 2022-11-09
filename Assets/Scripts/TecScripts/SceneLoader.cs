@@ -11,7 +11,6 @@ public class SceneLoader : MonoBehaviour
 
     private void Awake()
     {
-        _currentSceneNumber = SceneManager.GetActiveScene().buildIndex;
         LoadScene();
     }
 
@@ -31,8 +30,27 @@ public class SceneLoader : MonoBehaviour
     {
         Load();
 
-        if (SceneManager.sceneCountInBuildSettings > _currentSceneNumber && SceneManager.GetActiveScene().buildIndex != _currentSceneNumber)
-            SceneManager.LoadScene(_currentSceneNumber);
+        if (SceneManager.GetActiveScene().buildIndex != CalculateSceneToLoad())
+            SceneManager.LoadScene(CalculateSceneToLoad());
+
+    }
+
+    private int CalculateSceneToLoad()
+    {
+        int currentLevel = _currentSceneNumber;
+
+        if (SceneManager.sceneCountInBuildSettings <= _currentSceneNumber)
+        {
+            int exceedingFactor = _currentSceneNumber / SceneManager.sceneCountInBuildSettings;
+
+            for (int i = 0; i < exceedingFactor; i++)
+            {
+                currentLevel -= SceneManager.sceneCountInBuildSettings;
+            }
+
+        }
+
+        return currentLevel;
     }
 
     private void Save()
@@ -52,10 +70,7 @@ public class SceneLoader : MonoBehaviour
     {
         int saveSceneIndex;
 
-        if (SceneManager.sceneCountInBuildSettings >= _currentSceneNumber + 1)
-            saveSceneIndex = _currentSceneNumber + 1;
-        else
-            saveSceneIndex = _currentSceneNumber;
+        saveSceneIndex = _currentSceneNumber + 1;
 
         var data = new SaveData.SceneData()
         {

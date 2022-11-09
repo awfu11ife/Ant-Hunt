@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using UnityEngine.Events;
 
 public class BotTargetSwitcher : MonoBehaviour
@@ -49,10 +48,10 @@ public class BotTargetSwitcher : MonoBehaviour
 
         if (isInventoryFull == false && eatableObject != null)
             return eatableObject.ReturnNearestPiece(currentPosition).gameObject;
-        else if (_botStats.CurrentMaxAntAmount <= _antBots.Count && isInventoryFull == true)
+        else //if (_botStats.CurrentMaxAntAmount <= _antBots.Count && isInventoryFull == true)
             return _itemBuyer.gameObject;
-        else
-            return _antMother.gameObject;
+        //else
+        //    return _antMother.gameObject;
     }
 
     private void FindAllFood()

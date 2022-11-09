@@ -9,6 +9,8 @@ using UnityEngine.Events;
 
 public class LevelProgressBarChanger : MonoBehaviour
 {
+    private const string DataKey = "SceneLoader";
+
     [Range(0, 1)]
     [SerializeField] private float _requiredShareOfPieces;
     [SerializeField] private float _fillingTime = 0.5f;
@@ -20,6 +22,7 @@ public class LevelProgressBarChanger : MonoBehaviour
     private int _allPiecesCount;
     private int _requiredNumberOfPieces;
     private FoodPiecesContainer[] _food;
+    private int _currentSceneNumber;
 
     private UnityEvent _onCollectedShareOfPieces = new UnityEvent();
 
@@ -34,20 +37,17 @@ public class LevelProgressBarChanger : MonoBehaviour
         _food = FindObjectsOfType<FoodPiecesContainer>();
     }
 
-    private void OnEnable()
+    private void Start()
     {
-        foreach (FoodPiecesContainer food in _food)
+        foreach (var food in _food)
         {
             foreach (CollectableObject piece in food.GetComponentsInChildren<CollectableObject>())
             {
-                    piece.OnItemCollected += ChangeSliderValue;
-                    _allPiecesCount++;
+                piece.OnItemCollected += ChangeSliderValue;
+                _allPiecesCount++;
             }
         }
-    }
 
-    private void Start()
-    {
         _requiredNumberOfPieces = (int)Mathf.Round(_allPiecesCount * _requiredShareOfPieces);
         _fillImage.fillAmount = 0;
 
@@ -67,9 +67,18 @@ public class LevelProgressBarChanger : MonoBehaviour
 
     private void SetLevelNumbers()
     {
-        int currentLevelNumber = SceneManager.GetActiveScene().buildIndex + 1;
+        Load();
+
+        int currentLevelNumber = _currentSceneNumber + 1;
 
         _currentLevelNumber.text = currentLevelNumber.ToString();
         _nextLevelNumber.text = (currentLevelNumber + 1).ToString();
+    }
+    private void Load()
+    {
+        var data = SaveLoadData.Load<SaveData.SceneData>(DataKey);
+
+        if (_currentSceneNumber != data.CurrentScene)
+            _currentSceneNumber = data.CurrentScene;
     }
 }

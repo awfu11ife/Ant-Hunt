@@ -5,6 +5,8 @@ using UnityEngine;
 public class BotInventory : MonoBehaviour
 {
     [SerializeField] private BotMover _botMover;
+    [SerializeField] private AudioSource _takeSound;
+    [SerializeField] private AudioSource _dropSound;
 
     private int _maxItemsInInventory;
     private bool _isInventoryFull = false;
@@ -65,6 +67,12 @@ public class BotInventory : MonoBehaviour
 
             inventoryViewObject.SetInventoryPosition(_itemPlacePosition, _itemRotation, _inventoryItems.Count);
             _inventoryItems.Add(inventoryViewObject);
+
+            if (_takeSound.isPlaying == false)
+            {
+                _takeSound.pitch = Random.Range(0.9f, 1.1f);
+                _takeSound.Play();
+            }
         }
 
         if (_inventoryItems.Count >= _maxItemsInInventory)
@@ -82,6 +90,12 @@ public class BotInventory : MonoBehaviour
             lastObjectInInventory.transform.SetParent(placeToDrop.transform);
             placeToDrop.TakeItem(lastObjectInInventory);
             lastObjectInInventory.DisableOnDrop(placeToDrop.transform, _inventoryItems.Count);
+
+            if (_dropSound.isPlaying == false)
+            {
+                _dropSound.pitch = Random.Range(0.9f, 1.1f);
+                _dropSound.Play();
+            }
 
             if (_inventoryItems.Count == 0)
                 _isInventoryFull = false;
