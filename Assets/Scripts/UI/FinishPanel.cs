@@ -2,12 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.UI;
 
 public class FinishPanel : MonoBehaviour
 {
     [SerializeField] private float _animationDuration;
+    [SerializeField] private Button _inviteFriendButton;
 
     private WaitForSeconds _enableDelay;
+
+    private void Awake()
+    {
+#if VK_GAMES
+        _inviteFriendButton.gameObject.SetActive(true);
+#endif
+    }
 
     private void Start()
     {

@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class LeaderboardEnabeltyChanger : MonoBehaviour
 {
-    [SerializeField] private LeaderboardView _leaderboardView;
+#if YANDEX_GAMES
+    [SerializeField] private LeaderboardView _leaderboardView; 
 
     private void Start()
     {
@@ -18,4 +19,22 @@ public class LeaderboardEnabeltyChanger : MonoBehaviour
         else
             _leaderboardView.gameObject.SetActive(true);
     }
+#endif
+
+#if VK_GAMES
+    [SerializeField] private LeaderboardView _leaderboardView; 
+
+    private void Start()
+    {
+        _leaderboardView.gameObject.SetActive(false);
+
+        if (!Application.isMobilePlatform)
+            gameObject.SetActive(false);
+    }
+
+    public void ChangeEnabelty()
+    {
+        _leaderboardView.Open();
+    }
+#endif 
 }

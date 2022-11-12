@@ -1,13 +1,13 @@
 using System.Collections;
 using Agava.YandexGames;
 using Agava.YandexGames.Samples;
+using Agava.VKGames;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class LeaderboardView : MonoBehaviour
 {
-#if YANDEX_GAMES
 
     private const string LeaderboardName = "LeaderBoard";
 
@@ -15,6 +15,7 @@ public class LeaderboardView : MonoBehaviour
     [SerializeField] private GameObject _content;
     [SerializeField] private int _playersInLeaderboardCount = 10;
 
+#if YANDEX_GAMES
     private void OnEnable()
     {
         ClearLeaderboard();
@@ -23,7 +24,7 @@ public class LeaderboardView : MonoBehaviour
 
     private void UpdateLeaderboard()
     {
-        Leaderboard.GetEntries(LeaderboardName, (result) =>
+        Agava.YandexGames.Leaderboard.GetEntries(LeaderboardName, (result) =>
         {
             int countInLeaderBoard = 0;
 
@@ -58,6 +59,34 @@ public class LeaderboardView : MonoBehaviour
                 Destroy(child.gameObject);
             }
         }
+    }
+#endif
+
+#if VK_GAMES
+
+    private const string DataKey = "AntNest(Clone)";
+
+    private void Awake()
+    {
+        StartCoroutine(InitSdk());
+    }
+
+    public void Open()
+    {
+        Agava.VKGames.Leaderboard.ShowLeaderboard(Load());
+    }
+
+    private IEnumerator InitSdk()
+    {
+        yield return VKGamesSdk.Initialize();
+    }
+
+    private int Load()
+    {
+        var data = SaveLoadData.Load<SaveData.BotStatsData>(DataKey);
+        int score = data.CurrentNumberOfBots;
+
+        return score;
     }
 #endif
 }

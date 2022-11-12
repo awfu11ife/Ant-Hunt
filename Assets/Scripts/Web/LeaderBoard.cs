@@ -2,6 +2,8 @@ using System.Collections;
 using Agava.YandexGames;
 using Agava.YandexGames.Samples;
 using UnityEngine;
+using Agava.VKGames;
+using Agava.VKGames.Samples;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -47,12 +49,12 @@ public class LeaderBoard : MonoBehaviour
 
     private void SetLeaderboard()
     {
-        Leaderboard.SetScore(LeaderboardName, _currentAntAmount);
+        Agava.YandexGames.Leaderboard.SetScore(LeaderboardName, _currentAntAmount);
     }
 
     private void GetLeaderboard()
     {
-        Leaderboard.GetEntries(LeaderboardName, (result) =>
+        Agava.YandexGames.Leaderboard.GetEntries(LeaderboardName, (result) =>
         {
             Debug.Log($"My rank = {result.userRank}");
             foreach (var entry in result.entries)
@@ -67,7 +69,7 @@ public class LeaderBoard : MonoBehaviour
 
     private void GetLeaderboardPlayer()
     {
-        Leaderboard.GetPlayerEntry(LeaderboardName, (result) =>
+        Agava.YandexGames.Leaderboard.GetPlayerEntry(LeaderboardName, (result) =>
         {
             if (result == null)
                 Debug.Log("Player is not present in the leaderboard.");

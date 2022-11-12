@@ -60,4 +60,11 @@ public class SDK : MonoBehaviour
         Agava.VKGames.VideoAd.Show(onRewardedCallback: _onRewardViewed.Invoke);
     }
 #endif
+
+    public void InviteFriendsButton()
+    {
+#if VK_GAMES
+        SocialInteraction.InviteFriends(_onRewardViewed.Invoke);
+#endif
+    }
 }
